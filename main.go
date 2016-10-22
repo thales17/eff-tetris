@@ -18,7 +18,7 @@ func main() {
 	)
 
 	canvas.Run(func() {
-		td := tetrisDrawable{}
+		td := tetris{}
 		canvas.AddDrawable(&td)
 	})
 }
