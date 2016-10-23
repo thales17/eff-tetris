@@ -16,7 +16,7 @@ type tetris struct {
 }
 
 func (t *tetris) Init(c eff.Canvas) {
-	t.blocks = append(t.blocks, nextBlock())
+	t.blocks = append(t.blocks, tetrimino('i')...)
 	t.initialized = true
 }
 
@@ -37,7 +37,7 @@ func (t *tetris) Update(c eff.Canvas) {
 	if int(10.0*t.t) != t.updateT {
 		t.updateT = int(10.0 * t.t)
 		if !t.gravity() {
-			t.blocks = append(t.blocks, nextBlock())
+			t.blocks = append(t.blocks, tetrimino('i')...)
 		}
 	}
 
@@ -137,4 +137,25 @@ func nextBlock() block {
 	block.color = eff.RandomColor()
 
 	return block
+}
+
+func tetrimino(piece rune) []block {
+	iColor := eff.Color{R: 45, G: 255, B: 254, A: 255}
+	// jColor := eff.Color{R: 11, G: 36, B: 251, A: 255}
+	// lColor := eff.Color{R: 253, G: 164, B: 40, A: 255}
+	// oColor := eff.Color{R: 255, G: 253, B: 56, A: 255}
+	// sColor := eff.Color{R: 41, G: 253, B: 47, A: 255}
+	// tColor := eff.Color{R: 169, G: 38, B: 251, A: 255}
+	// zColor := eff.Color{R: 252, G: 13, B: 27, A: 255}
+
+	var t []block
+	for i := 0; i < 4; i++ {
+		b := block{}
+		b.X = i
+		b.Y = -1
+		b.color = iColor
+		t = append(t, b)
+	}
+
+	return t
 }
