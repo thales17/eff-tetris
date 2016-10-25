@@ -26,6 +26,8 @@ func main() {
 				td.moveLeft()
 			case "D":
 				td.moveRight()
+			case "R":
+				td.rotate()
 			}
 		})
 	})
