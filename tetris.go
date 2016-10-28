@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"math/rand"
 
 	"github.com/forestgiant/eff"
 )
@@ -9,7 +10,7 @@ import (
 type tetris struct {
 	initialized bool
 	blocks      []block
-	tetrimino   []block
+	tetrimino   tetrimino
 	t           float64
 	updateT     int
 	gameOver    bool
@@ -19,14 +20,16 @@ type tetris struct {
 func (t *tetris) Init(c eff.Canvas) {
 	t.tetrimino = randomTetrimino()
 	t.initialized = true
-	t.tPoint.X = 5
+	t.tPoint.X = (matrixWidth - t.tetrimino.width()) / 2
 	t.tPoint.Y = 0
 }
 
 func (t *tetris) Draw(c eff.Canvas) {
+	tetriminoBlocks := t.tetrimino.blocks()
 	for i := 0; i < 4; i++ {
-		t.tetrimino[i].drawWithPoint(t.tPoint, c)
+		tetriminoBlocks[i].drawWithPoint(t.tPoint, c)
 	}
+
 	for i := 0; i < len(t.blocks); i++ {
 		t.blocks[i].draw(c)
 	}
@@ -44,15 +47,17 @@ func (t *tetris) Update(c eff.Canvas) {
 	if int(float64(10.0)*t.t) != t.updateT {
 		t.updateT = int(float64(10.0) * t.t)
 		if !t.moveTetrimino() {
+			blocks := t.tetrimino.blocks()
 			for i := 0; i < 4; i++ {
-				b := t.tetrimino[i]
+				b := blocks[i]
 				b.X += t.tPoint.X
 				b.Y += t.tPoint.Y
 				t.blocks = append(t.blocks, b)
 			}
-			t.tPoint.X = 5
-			t.tPoint.Y = 0
 			t.tetrimino = randomTetrimino()
+			t.tPoint.X = (matrixWidth - t.tetrimino.width()) / 2
+			t.tPoint.Y = 0
+
 		}
 	}
 
@@ -68,9 +73,8 @@ func (t *tetris) Initialized() bool {
 
 func (t *tetris) moveTetrimino() bool {
 	for i := 0; i < 4; i++ {
-		b := t.tetrimino[i]
-		x := b.X + t.tPoint.X
-		y := b.Y + t.tPoint.Y
+		x := t.tetrimino.currentPoints()[i].X + t.tPoint.X
+		y := t.tetrimino.currentPoints()[i].Y + t.tPoint.Y
 		if y == matrixHeight-1 {
 			return false
 		}
@@ -125,9 +129,8 @@ func (t *tetris) isGameOver() bool {
 
 func (t *tetris) moveLeft() {
 	for i := 0; i < 4; i++ {
-		b := t.tetrimino[i]
-		x := b.X + t.tPoint.X
-		y := b.Y + t.tPoint.Y
+		x := t.tetrimino.currentPoints()[i].X + t.tPoint.X
+		y := t.tetrimino.currentPoints()[i].Y + t.tPoint.Y
 		if x == 0 {
 			return
 		}
@@ -145,9 +148,8 @@ func (t *tetris) moveLeft() {
 
 func (t *tetris) moveRight() {
 	for i := 0; i < 4; i++ {
-		b := t.tetrimino[i]
-		x := b.X + t.tPoint.X
-		y := b.Y + t.tPoint.Y
+		x := t.tetrimino.currentPoints()[i].X + t.tPoint.X
+		y := t.tetrimino.currentPoints()[i].Y + t.tPoint.Y
 		if x == matrixWidth-1 {
 			return
 		}
@@ -164,12 +166,7 @@ func (t *tetris) moveRight() {
 }
 
 func (t *tetris) rotate() {
-
-	for i := 0; i < 4; i++ {
-		x := t.tetrimino[i].X
-		t.tetrimino[i].X = t.tetrimino[i].Y * -1
-		t.tetrimino[i].Y = x
-	}
+	t.tetrimino.rotate()
 }
 
 type block struct {
@@ -213,104 +210,92 @@ func (b *block) drawWithPoint(p eff.Point, c eff.Canvas) {
 	bPrime.draw(c)
 }
 
-func tetriminoForRune(piece rune) []block {
-	var t []block
+type tetrimino struct {
+	color       eff.Color
+	points      [][]eff.Point
+	piece       rune
+	rotateIndex int
+}
+
+func (t *tetrimino) rotate() {
+	t.rotateIndex++
+	if t.rotateIndex >= len(t.points) {
+		t.rotateIndex = 0
+	}
+}
+
+func (t *tetrimino) blocks() []block {
+	var blocks []block
+	for i := 0; i < 4; i++ {
+		b := block{}
+		b.X = t.points[t.rotateIndex][i].X
+		b.Y = t.points[t.rotateIndex][i].Y
+		b.color = t.color
+		blocks = append(blocks, b)
+	}
+
+	return blocks
+}
+
+func (t *tetrimino) currentPoints() []eff.Point {
+	return t.points[t.rotateIndex]
+}
+
+func (t *tetrimino) width() int {
+	points := t.currentPoints()
+	w := 0
+	for i := 0; i < 4; i++ {
+		if points[i].X > w {
+			w = points[i].X
+		}
+	}
+
+	return w + 1
+}
+
+func tetriminoForRune(piece rune) tetrimino {
+	t := tetrimino{piece: piece}
 	switch piece {
 	case 'i':
-		color := eff.Color{R: 45, G: 255, B: 254, A: 255}
-		for i := -2; i < 2; i++ {
-			b := block{}
-			b.X = i
-			b.Y = 0
-			b.color = color
-			t = append(t, b)
-		}
+		t.color = eff.Color{R: 45, G: 255, B: 254, A: 255}
+		t.points = append(t.points, []eff.Point{{X: 0, Y: 0}, {X: 1, Y: 0}, {X: 2, Y: 0}, {X: 3, Y: 0}})
+		t.points = append(t.points, []eff.Point{{X: 0, Y: 0}, {X: 0, Y: 1}, {X: 0, Y: 2}, {X: 0, Y: 3}})
 	case 'j':
-		color := eff.Color{R: 11, G: 36, B: 251, A: 255}
-		for i := -1; i < 2; i++ {
-			b := block{}
-			b.X = i
-			b.Y = 0
-			b.color = color
-			t = append(t, b)
-		}
-		b := block{}
-		b.X = 1
-		b.Y = 1
-		b.color = color
-		t = append(t, b)
+		t.color = eff.Color{R: 11, G: 36, B: 251, A: 255}
+		t.points = append(t.points, []eff.Point{{X: 0, Y: 0}, {X: 1, Y: 0}, {X: 2, Y: 0}, {X: 2, Y: 1}})
+		t.points = append(t.points, []eff.Point{{X: 1, Y: 0}, {X: 1, Y: 1}, {X: 1, Y: 2}, {X: 0, Y: 2}})
+		t.points = append(t.points, []eff.Point{{X: 0, Y: 0}, {X: 0, Y: 1}, {X: 1, Y: 1}, {X: 2, Y: 1}})
+		t.points = append(t.points, []eff.Point{{X: 0, Y: 0}, {X: 0, Y: 1}, {X: 0, Y: 2}, {X: 1, Y: 0}})
 	case 'l':
-		color := eff.Color{R: 253, G: 164, B: 40, A: 255}
-		for i := -1; i < 2; i++ {
-			b := block{}
-			b.X = i
-			b.Y = 0
-			b.color = color
-			t = append(t, b)
-		}
-		b := block{}
-		b.X = -1
-		b.Y = 1
-		b.color = color
-		t = append(t, b)
+		t.color = eff.Color{R: 253, G: 164, B: 40, A: 255}
+		t.points = append(t.points, []eff.Point{{X: 0, Y: 0}, {X: 1, Y: 0}, {X: 2, Y: 0}, {X: 0, Y: 1}})
+		t.points = append(t.points, []eff.Point{{X: 0, Y: 0}, {X: 1, Y: 0}, {X: 1, Y: 1}, {X: 1, Y: 2}})
+		t.points = append(t.points, []eff.Point{{X: 0, Y: 1}, {X: 1, Y: 1}, {X: 2, Y: 1}, {X: 2, Y: 0}})
+		t.points = append(t.points, []eff.Point{{X: 0, Y: 0}, {X: 0, Y: 1}, {X: 0, Y: 2}, {X: 1, Y: 2}})
 	case 'o':
-		color := eff.Color{R: 255, G: 253, B: 56, A: 255}
-		for i := 0; i < 4; i++ {
-			b := block{}
-			b.X = i%2 - 1
-			b.Y = (i / 2)
-			b.color = color
-			t = append(t, b)
-		}
+		t.color = eff.Color{R: 255, G: 253, B: 56, A: 255}
+		t.points = append(t.points, []eff.Point{{X: 0, Y: 0}, {X: 1, Y: 0}, {X: 0, Y: 1}, {X: 1, Y: 1}})
 	case 's':
-		color := eff.Color{R: 41, G: 253, B: 47, A: 255}
-		for i := -2; i < 2; i++ {
-			b := block{}
-			b.X = i
-			if i < 0 {
-				b.Y = 1
-			} else {
-				b.Y = 0
-				b.X--
-			}
-			b.color = color
-			t = append(t, b)
-		}
+		t.color = eff.Color{R: 41, G: 253, B: 47, A: 255}
+		t.points = append(t.points, []eff.Point{{X: 0, Y: 1}, {X: 1, Y: 1}, {X: 1, Y: 0}, {X: 2, Y: 0}})
+		t.points = append(t.points, []eff.Point{{X: 0, Y: 0}, {X: 0, Y: 1}, {X: 1, Y: 1}, {X: 1, Y: 2}})
 	case 't':
-		color := eff.Color{R: 169, G: 38, B: 251, A: 255}
-		for i := -1; i < 2; i++ {
-			b := block{}
-			b.X = i
-			b.Y = 0
-			b.color = color
-			t = append(t, b)
-		}
-		b := block{}
-		b.X = 0
-		b.Y = 1
-		b.color = color
-		t = append(t, b)
+		t.color = eff.Color{R: 169, G: 38, B: 251, A: 255}
+		t.points = append(t.points, []eff.Point{{X: 0, Y: 0}, {X: 1, Y: 0}, {X: 2, Y: 0}, {X: 1, Y: 1}})
+		t.points = append(t.points, []eff.Point{{X: 1, Y: 0}, {X: 1, Y: 1}, {X: 1, Y: 2}, {X: 0, Y: 1}})
+		t.points = append(t.points, []eff.Point{{X: 0, Y: 1}, {X: 1, Y: 1}, {X: 2, Y: 1}, {X: 1, Y: 0}})
+		t.points = append(t.points, []eff.Point{{X: 0, Y: 0}, {X: 0, Y: 1}, {X: 0, Y: 2}, {X: 1, Y: 1}})
 	case 'z':
-		color := eff.Color{R: 252, G: 13, B: 27, A: 255}
-		for i := -2; i < 2; i++ {
-			b := block{}
-			b.X = i
-			if i < 0 {
-				b.Y = 0
-			} else {
-				b.Y = 1
-				b.X--
-			}
-			b.color = color
-			t = append(t, b)
-		}
+		t.color = eff.Color{R: 252, G: 13, B: 27, A: 255}
+		t.points = append(t.points, []eff.Point{{X: 0, Y: 0}, {X: 1, Y: 0}, {X: 1, Y: 1}, {X: 2, Y: 1}})
+		t.points = append(t.points, []eff.Point{{X: 0, Y: 2}, {X: 0, Y: 1}, {X: 1, Y: 1}, {X: 1, Y: 0}})
+
 	}
 
 	return t
 }
 
-func randomTetrimino() []block {
-	// pieces := []rune{'i', 'j', 'l', 'o', 's', 't', 'z'}
-	// return tetriminoForRune(pieces[rand.Intn(len(pieces))])
-	return tetriminoForRune('z')
+func randomTetrimino() tetrimino {
+	pieces := []rune{'i', 'j', 'l', 'o', 's', 't', 'z'}
+	return tetriminoForRune(pieces[rand.Intn(len(pieces))])
 }
