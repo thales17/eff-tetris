@@ -1,6 +1,9 @@
 package main
 
-import "github.com/forestgiant/eff/sdl"
+import (
+	"github.com/forestgiant/eff"
+	"github.com/forestgiant/eff/sdl"
+)
 
 const (
 	matrixWidth  int = 10
@@ -13,6 +16,7 @@ func main() {
 		"Eff-Tetris",
 		matrixWidth*squareSize,
 		matrixHeight*squareSize,
+		eff.Color{R: 0x00, G: 0x00, B: 0x00, A: 0xFF},
 		60,
 		true,
 	)

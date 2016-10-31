@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"math/rand"
+	"time"
 
 	"github.com/forestgiant/eff"
 )
@@ -18,6 +19,7 @@ type tetris struct {
 }
 
 func (t *tetris) Init(c eff.Canvas) {
+	rand.Seed(time.Now().UnixNano())
 	t.tetrimino = randomTetrimino()
 	t.initialized = true
 	t.tPoint.X = (matrixWidth - t.tetrimino.width()) / 2
