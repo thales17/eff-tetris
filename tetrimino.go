@@ -67,6 +67,20 @@ func (t *tetrimino) testPoints(tp eff.Point) []eff.Point {
 	return cp
 }
 
+func (t *tetrimino) testNextPoints(tp eff.Point) []eff.Point {
+	var cp []eff.Point
+	for _, p := range t.originPoints() {
+		np := eff.Point{
+			X: p.X + t.nextPoint.X + tp.X,
+			Y: p.Y + t.nextPoint.Y + tp.Y,
+		}
+
+		cp = append(cp, np)
+	}
+
+	return cp
+}
+
 func (t *tetrimino) nextRotationPoints() []eff.Point {
 	nextIndex := t.rotateIndex + 1
 	if nextIndex >= len(t.points) {
@@ -97,11 +111,22 @@ func (t *tetrimino) width() int {
 	return w + 1
 }
 
-func (t *tetrimino) draw(c eff.Canvas) {
+func (t *tetrimino) draw(c eff.Canvas, per float64) {
 	tetriminoBlocks := t.blocks()
-	for i := 0; i < 4; i++ {
-		tetriminoBlocks[i].drawWithPoint(t.point, c)
+	diffX := t.nextPoint.X - t.point.X
+	diffY := t.nextPoint.Y - t.point.Y
+	p := eff.Point{
+		X: t.point.X + int(float64(diffX)*per),
+		Y: t.point.Y + int(float64(diffY)*per),
 	}
+
+	for i := 0; i < 4; i++ {
+		tetriminoBlocks[i].drawWithPoint(p, c)
+	}
+}
+
+func (t *tetrimino) updatePoints() {
+	t.point = t.nextPoint
 }
 
 func tetriminoForRune(piece rune) tetrimino {
@@ -151,6 +176,7 @@ func randomTetrimino() tetrimino {
 	t := tetriminoForRune(pieces[rand.Intn(len(pieces))])
 	t.point.X = (matrixWidth - t.width()) / 2
 	t.point.Y = 0
-
+	t.nextPoint.X = t.point.X
+	t.nextPoint.Y = t.point.Y
 	return t
 }

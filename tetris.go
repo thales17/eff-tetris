@@ -19,6 +19,8 @@ type tetris struct {
 	time        int
 	speed       int
 	gameOver    bool
+	animTime    int
+	animPer     float64
 }
 
 func (t *tetris) Init(c eff.Canvas) {
@@ -29,7 +31,7 @@ func (t *tetris) Init(c eff.Canvas) {
 }
 
 func (t *tetris) Draw(c eff.Canvas) {
-	t.tetrimino.draw(c)
+	t.tetrimino.draw(c, t.animPer)
 
 	for i := 0; i < len(t.blocks); i++ {
 		t.blocks[i].draw(c)
@@ -44,6 +46,9 @@ func (t *tetris) Update(c eff.Canvas) {
 	t.time += t.speed
 	if t.time > maxTime {
 		t.time = 0
+		t.animTime = 0
+		t.animPer = 0
+		t.tetrimino.updatePoints()
 		if !t.moveTetrimino() {
 			t.blocks = append(t.blocks, t.tetrimino.blocksWithPoint()...)
 			t.tetrimino = randomTetrimino()
@@ -56,7 +61,14 @@ func (t *tetris) Update(c eff.Canvas) {
 			fmt.Println("Game over man!")
 		}
 	} else {
+		totalAnimFrames := (maxTime / t.speed)
+		t.animTime++
+		t.animPer = float64(t.animTime) / float64(totalAnimFrames)
+		// fmt.Println("totalAnimFrames", totalAnimFrames)
+		// fmt.Println("t.animTime", t.animTime)
+		// fmt.Println("animPer", animPer)
 		//Tween from point to nextPoint
+		//update time
 	}
 
 }
@@ -66,8 +78,8 @@ func (t *tetris) Initialized() bool {
 }
 
 func (t *tetris) moveTetrimino() bool {
-	if t.arePointsClear(t.tetrimino.testPoints(eff.Point{X: 0, Y: 1})) {
-		t.tetrimino.point.Y++
+	if t.arePointsClear(t.tetrimino.testNextPoints(eff.Point{X: 0, Y: 1})) {
+		t.tetrimino.nextPoint.Y++
 		return true
 	}
 
@@ -123,6 +135,7 @@ func (t *tetris) clearLines() bool {
 func (t *tetris) moveLeft() bool {
 	if t.arePointsClear(t.tetrimino.testPoints(eff.Point{X: -1, Y: 0})) {
 		t.tetrimino.point.X--
+		t.tetrimino.nextPoint.X--
 		return true
 	}
 
@@ -132,6 +145,7 @@ func (t *tetris) moveLeft() bool {
 func (t *tetris) moveRight() bool {
 	if t.arePointsClear(t.tetrimino.testPoints(eff.Point{X: 1, Y: 0})) {
 		t.tetrimino.point.X++
+		t.tetrimino.nextPoint.X++
 		return true
 	}
 
