@@ -32,6 +32,8 @@ func main() {
 				td.moveRight()
 			case "R":
 				td.rotate()
+			case "S":
+				td.dropTetrimino()
 			}
 		})
 	})

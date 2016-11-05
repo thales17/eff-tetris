@@ -41,7 +41,7 @@ func (t *tetris) Update(c eff.Canvas) {
 	if t.gameOver {
 		return
 	}
-	t.t += 0.01
+	t.t += 0.003
 	if t.t > 1 {
 		t.t = 0
 	}
@@ -62,7 +62,7 @@ func (t *tetris) Update(c eff.Canvas) {
 
 		}
 	}
-
+	t.clearLines()
 	t.gameOver = t.isGameOver()
 	if t.gameOver {
 		fmt.Println("Game over man!")
@@ -88,6 +88,11 @@ func (t *tetris) moveTetrimino() bool {
 	return true
 }
 
+func (t *tetris) dropTetrimino() {
+	for t.moveTetrimino() {
+	}
+}
+
 func (t *tetris) isGameOver() bool {
 	for i := 0; i < len(t.blocks); i++ {
 		if t.blocks[i].Y == 0 {
@@ -96,6 +101,37 @@ func (t *tetris) isGameOver() bool {
 	}
 
 	return false
+}
+
+func (t *tetris) clearLines() bool {
+	linesCleared := 0
+	for i := 0; i < matrixHeight; i++ {
+		lineBlocks := 0
+		for _, b := range t.blocks {
+			if b.Y == i {
+				lineBlocks++
+			}
+		}
+
+		if lineBlocks == matrixWidth {
+			fmt.Println("Line!", i)
+			linesCleared++
+
+			var newBlocks []block
+			for _, b := range t.blocks {
+				if b.Y != i {
+					if b.Y < i {
+						b.Y++
+					}
+					newBlocks = append(newBlocks, b)
+				}
+			}
+
+			t.blocks = newBlocks
+		}
+	}
+
+	return linesCleared > 0
 }
 
 func (t *tetris) moveLeft() {
