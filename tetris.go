@@ -77,13 +77,9 @@ func (t *tetris) moveTetrimino() bool {
 	for i := 0; i < 4; i++ {
 		x := t.tetrimino.currentPoints()[i].X + t.tPoint.X
 		y := t.tetrimino.currentPoints()[i].Y + t.tPoint.Y
-		if y == matrixHeight-1 {
+
+		if !t.isBlockClear(eff.Point{X: x, Y: y + 1}) {
 			return false
-		}
-		for j := 0; j < len(t.blocks); j++ {
-			if x == t.blocks[j].X && y+1 == t.blocks[j].Y {
-				return false
-			}
 		}
 	}
 
@@ -91,33 +87,6 @@ func (t *tetris) moveTetrimino() bool {
 
 	return true
 }
-
-// func (t *tetris) gravity() bool {
-// 	fallingBlocks := false
-// 	for i := 0; i < len(t.blocks); i++ {
-// 		//Check if on the bottom
-// 		if t.blocks[i].Y == matrixHeight-1 {
-// 			continue
-// 		}
-
-// 		// Check for a block below
-// 		belowBlock := false
-// 		for j := 0; j < len(t.blocks); j++ {
-// 			if t.blocks[j].X == t.blocks[i].X && t.blocks[j].Y == t.blocks[i].Y+1 {
-// 				belowBlock = true
-// 				break
-// 			}
-// 		}
-
-// 		// No block below and not on the bottom moving the block down
-// 		if !belowBlock {
-// 			t.blocks[i].Y++
-// 			fallingBlocks = true
-// 		}
-// 	}
-
-// 	return fallingBlocks
-// }
 
 func (t *tetris) isGameOver() bool {
 	for i := 0; i < len(t.blocks); i++ {
@@ -133,13 +102,9 @@ func (t *tetris) moveLeft() {
 	for i := 0; i < 4; i++ {
 		x := t.tetrimino.currentPoints()[i].X + t.tPoint.X
 		y := t.tetrimino.currentPoints()[i].Y + t.tPoint.Y
-		if x == 0 {
+
+		if !t.isBlockClear(eff.Point{X: x - 1, Y: y + 1}) {
 			return
-		}
-		for j := 0; j < len(t.blocks); j++ {
-			if y == t.blocks[j].Y && x-1 == t.blocks[j].X {
-				return
-			}
 		}
 	}
 
@@ -152,13 +117,9 @@ func (t *tetris) moveRight() {
 	for i := 0; i < 4; i++ {
 		x := t.tetrimino.currentPoints()[i].X + t.tPoint.X
 		y := t.tetrimino.currentPoints()[i].Y + t.tPoint.Y
-		if x == matrixWidth-1 {
+
+		if !t.isBlockClear(eff.Point{X: x + 1, Y: y + 1}) {
 			return
-		}
-		for j := 0; j < len(t.blocks); j++ {
-			if y == t.blocks[j].Y && x+1 == t.blocks[j].X {
-				return
-			}
 		}
 	}
 
@@ -168,7 +129,32 @@ func (t *tetris) moveRight() {
 }
 
 func (t *tetris) rotate() {
+	nextPoints := t.tetrimino.nextPoints()
+	for _, p := range nextPoints {
+		if !t.isBlockClear(eff.Point{X: p.X + t.tPoint.X, Y: p.Y + t.tPoint.Y}) {
+			return
+		}
+	}
+
 	t.tetrimino.rotate()
+}
+
+func (t *tetris) isBlockClear(p eff.Point) bool {
+	if p.X < 0 || p.Y < 0 {
+		return false
+	}
+
+	if p.X >= matrixWidth || p.Y >= matrixHeight {
+		return false
+	}
+
+	for _, b := range t.blocks {
+		if b.X == p.X && b.Y == p.Y {
+			return false
+		}
+	}
+
+	return true
 }
 
 type block struct {
@@ -241,6 +227,15 @@ func (t *tetrimino) blocks() []block {
 
 func (t *tetrimino) currentPoints() []eff.Point {
 	return t.points[t.rotateIndex]
+}
+
+func (t *tetrimino) nextPoints() []eff.Point {
+	nextIndex := t.rotateIndex + 1
+	if nextIndex >= len(t.points) {
+		nextIndex = 0
+	}
+
+	return t.points[nextIndex]
 }
 
 func (t *tetrimino) width() int {
