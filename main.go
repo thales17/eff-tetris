@@ -24,16 +24,29 @@ func main() {
 	canvas.Run(func() {
 		td := tetris{}
 		canvas.AddDrawable(&td)
-		canvas.AddKeyDownHandler(func(key string) {
+		// canvas.AddKeyDownHandler(func(key string) {
+		// 	switch key {
+		// 	case "A":
+		// 		td.moveLeft()
+		// 	case "D":
+		// 		td.moveRight()
+		// 	case "R":
+		// 		td.rotate()
+		// 	case "S":
+		// 		td.dropTetrimino()
+		// 	}
+		// })
+
+		canvas.AddKeyDownEnumHandler(func(key sdl.Keycode) {
 			switch key {
-			case "A":
+			case sdl.KeyLeft:
 				td.moveLeft()
-			case "D":
+			case sdl.KeyRight:
 				td.moveRight()
-			case "R":
-				td.rotate()
-			case "S":
+			case sdl.KeySpace:
 				td.dropTetrimino()
+			case sdl.KeyUp:
+				td.rotate()
 			}
 		})
 	})
