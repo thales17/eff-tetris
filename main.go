@@ -1,7 +1,9 @@
 package main
 
 import (
+	"fmt"
 	"math/rand"
+	"os"
 	"time"
 
 	"github.com/forestgiant/eff"
@@ -26,6 +28,16 @@ func main() {
 
 	canvas.Run(func() {
 		rand.Seed(time.Now().UnixNano())
+		font := eff.Font{
+			Path: "assets/fonts/roboto/Roboto-Bold.ttf",
+		}
+
+		err := canvas.SetFont(font, 24)
+		if err != nil {
+			fmt.Println(err)
+			os.Exit(1)
+		}
+
 		td := tetris{}
 		m := menu{}
 		showingMenu := true
@@ -35,6 +47,7 @@ func main() {
 				canvas.AddDrawable(&td)
 			} else {
 				canvas.RemoveDrawable(&td)
+				m = menu{}
 				canvas.AddDrawable(&m)
 			}
 
