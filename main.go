@@ -1,6 +1,9 @@
 package main
 
 import (
+	"math/rand"
+	"time"
+
 	"github.com/forestgiant/eff"
 	"github.com/forestgiant/eff/sdl"
 )
@@ -22,6 +25,7 @@ func main() {
 	)
 
 	canvas.Run(func() {
+		rand.Seed(time.Now().UnixNano())
 		td := tetris{}
 		m := menu{}
 		showingMenu := true
