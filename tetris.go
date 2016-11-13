@@ -19,6 +19,7 @@ type tetris struct {
 	time        int
 	speed       int
 	gameOver    bool
+	paused      bool
 }
 
 func (t *tetris) Init(c eff.Canvas) {
@@ -37,7 +38,7 @@ func (t *tetris) Draw(c eff.Canvas) {
 }
 
 func (t *tetris) Update(c eff.Canvas) {
-	if t.gameOver {
+	if t.gameOver || t.paused {
 		return
 	}
 
@@ -64,6 +65,9 @@ func (t *tetris) Initialized() bool {
 }
 
 func (t *tetris) moveTetrimino() bool {
+	if t.paused {
+		return false
+	}
 	if t.arePointsClear(t.tetrimino.testPoints(eff.Point{X: 0, Y: 1})) {
 		t.tetrimino.point.Y++
 		return true
@@ -73,6 +77,9 @@ func (t *tetris) moveTetrimino() bool {
 }
 
 func (t *tetris) dropTetrimino() {
+	if t.paused {
+		return
+	}
 	for t.moveTetrimino() {
 	}
 }
@@ -119,6 +126,9 @@ func (t *tetris) clearLines() bool {
 }
 
 func (t *tetris) moveLeft() bool {
+	if t.paused {
+		return false
+	}
 	if t.arePointsClear(t.tetrimino.testPoints(eff.Point{X: -1, Y: 0})) {
 		t.tetrimino.point.X--
 		return true
@@ -128,6 +138,9 @@ func (t *tetris) moveLeft() bool {
 }
 
 func (t *tetris) moveRight() bool {
+	if t.paused {
+		return false
+	}
 	if t.arePointsClear(t.tetrimino.testPoints(eff.Point{X: 1, Y: 0})) {
 		t.tetrimino.point.X++
 		return true
@@ -137,6 +150,9 @@ func (t *tetris) moveRight() bool {
 }
 
 func (t *tetris) rotate() bool {
+	if t.paused {
+		return false
+	}
 	if t.arePointsClear(t.tetrimino.nextRotationPoints()) {
 		t.tetrimino.rotate()
 		return true

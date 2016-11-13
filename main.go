@@ -23,7 +23,21 @@ func main() {
 
 	canvas.Run(func() {
 		td := tetris{}
-		canvas.AddDrawable(&td)
+		m := menu{}
+		showingMenu := true
+		swapMenuGame := func() {
+			if showingMenu {
+				canvas.RemoveDrawable(&m)
+				canvas.AddDrawable(&td)
+			} else {
+				canvas.RemoveDrawable(&td)
+				canvas.AddDrawable(&m)
+			}
+
+			showingMenu = !showingMenu
+		}
+
+		canvas.AddDrawable(&m)
 
 		canvas.AddKeyDownEnumHandler(func(key sdl.Keycode) {
 			switch key {
@@ -45,6 +59,10 @@ func main() {
 				fallthrough
 			case sdl.KeyDown:
 				td.moveTetrimino()
+			case sdl.KeyP:
+				td.paused = !td.paused
+			case sdl.KeyReturn:
+				swapMenuGame()
 			}
 		})
 	})
