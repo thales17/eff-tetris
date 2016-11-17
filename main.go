@@ -77,7 +77,7 @@ func main() {
 			case sdl.KeyDown:
 				td.moveTetrimino()
 			case sdl.KeyP:
-				td.paused = !td.paused
+				td.togglePause(canvas)
 			case sdl.KeyReturn:
 				swapMenuGame()
 			}

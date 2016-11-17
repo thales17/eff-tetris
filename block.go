@@ -12,6 +12,7 @@ func (b *block) draw(c eff.Canvas) {
 		R: 255,
 		G: 255,
 		B: 255,
+		A: 255,
 	}
 	x := b.X * squareSize
 	y := b.Y * squareSize

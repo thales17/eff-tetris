@@ -18,6 +18,7 @@ type tetris struct {
 	speed       int
 	gameOver    bool
 	paused      bool
+	ps          pauseScreen
 }
 
 func (t *tetris) Init(c eff.Canvas) {
@@ -25,6 +26,8 @@ func (t *tetris) Init(c eff.Canvas) {
 	t.tetrimino = randomTetrimino()
 	t.initialized = true
 	t.speed = 3
+
+	t.ps = pauseScreen{}
 }
 
 func (t *tetris) Draw(c eff.Canvas) {
@@ -185,4 +188,14 @@ func (t *tetris) arePointsClear(points []eff.Point) bool {
 	}
 
 	return true
+}
+
+func (t *tetris) togglePause(c eff.Canvas) {
+	t.paused = !t.paused
+
+	if t.paused {
+		c.AddDrawable(&t.ps)
+	} else {
+		c.RemoveDrawable(&t.ps)
+	}
 }
