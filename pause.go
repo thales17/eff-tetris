@@ -11,7 +11,7 @@ type pauseScreen struct {
 
 func (p *pauseScreen) Init(c eff.Canvas) {
 	p.progressStep = float64(1) / float64(25)
-	p.letterBlocks = append(p.letterBlocks, letterBlocksForString("PAUSE", eff.Point{X: 0, Y: 0}, c, false)...)
+	p.letterBlocks = append(p.letterBlocks, letterBlocksForString("PAUSE", eff.Point{X: 0, Y: 0})...)
 	p.initialized = true
 }
 
@@ -39,7 +39,7 @@ func (p *pauseScreen) Update(c eff.Canvas) {
 		p.progress += p.progressStep
 	}
 
-	for i := range p.letterBlocks {
-		p.letterBlocks[i].rect = p.letterBlocks[i].mover(p.letterBlocks[i].rect, p.progress)
-	}
+	// for i := range p.letterBlocks {
+	// p.letterBlocks[i].rect = p.letterBlocks[i].mover(p.letterBlocks[i].rect, p.progress)
+	// }
 }

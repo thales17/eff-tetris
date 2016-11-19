@@ -13,7 +13,6 @@ type letterBlock struct {
 	letter rune
 	color  eff.Color
 	rect   eff.Rect
-	mover  func(eff.Rect, float64) eff.Rect
 }
 
 func (l *letterBlock) draw(c eff.Canvas) {
@@ -37,15 +36,8 @@ func (l *letterBlock) draw(c eff.Canvas) {
 		os.Exit(1)
 	}
 }
-func createMover(start eff.Point, end eff.Point) func(eff.Rect, float64) eff.Rect {
-	return func(r eff.Rect, p float64) eff.Rect {
-		r.X = start.X + int(float64(end.X-start.X)*p)
-		r.Y = start.Y + int(float64(end.Y-start.Y)*p)
-		return r
-	}
-}
 
-func letterBlocksForString(s string, offset eff.Point, c eff.Canvas, bottom bool) []letterBlock {
+func letterBlocksForString(s string, offset eff.Point) []letterBlock {
 	var colors []eff.Color
 	colors = append(colors, eff.Color{R: 45, G: 255, B: 254, A: 255})
 	colors = append(colors, eff.Color{R: 11, G: 36, B: 251, A: 255})
@@ -59,30 +51,15 @@ func letterBlocksForString(s string, offset eff.Point, c eff.Canvas, bottom bool
 
 	var letterBlocks []letterBlock
 	for i, letter := range s {
-		start := eff.Point{
-			X: offset.X + i*blockSize,
-			Y: -(i * i * blockSize) - blockSize,
-		}
-
-		if bottom {
-			start.Y += c.Height()
-		}
-
-		end := eff.Point{
-			X: offset.X + i*blockSize,
-			Y: offset.Y,
-		}
-
 		letterBlocks = append(letterBlocks, letterBlock{
 			letter: letter,
 			color:  colors[rand.Intn(len(colors))],
 			rect: eff.Rect{
-				X: start.X,
-				Y: start.Y,
+				X: offset.X + i*blockSize,
+				Y: offset.Y,
 				W: blockSize,
 				H: blockSize,
 			},
-			mover: createMover(start, end),
 		})
 	}
 
