@@ -1,18 +1,35 @@
 package main
 
-import "github.com/forestgiant/eff"
+import (
+	"math"
+	"time"
+
+	"github.com/forestgiant/eff"
+	"github.com/forestgiant/eff/component/tween"
+)
 
 type pauseScreen struct {
 	letterBlocks []letterBlock
 	initialized  bool
-	progress     float64
-	progressStep float64
+	tweener      tween.Tweener
 }
 
 func (p *pauseScreen) Init(c eff.Canvas) {
-	p.progressStep = float64(1) / float64(25)
-	p.letterBlocks = append(p.letterBlocks, letterBlocksForString("PAUSE", eff.Point{X: 0, Y: 0})...)
+	blockSize := 30
+	pauseStr := "PAUSE"
+	offsetPoint := eff.Point{X: (c.Width() - (len(pauseStr) * blockSize)) / 2, Y: (c.Height() - blockSize) / 2}
+	p.letterBlocks = append(p.letterBlocks, letterBlocksForString("PAUSE", offsetPoint)...)
 	p.initialized = true
+	angle := float64(0)
+	p.tweener = tween.NewTweener(time.Millisecond*500, func(progress float64) {
+		amp := 25
+		for i := range p.letterBlocks {
+			x := float64(p.letterBlocks[i].rect.X) + angle
+			y := int(math.Sin(x) * float64(amp))
+			p.letterBlocks[i].rect.Y = offsetPoint.Y + y
+		}
+		angle += 0.08
+	}, true)
 }
 
 func (p *pauseScreen) Initialized() bool {
@@ -35,11 +52,5 @@ func (p *pauseScreen) Draw(c eff.Canvas) {
 }
 
 func (p *pauseScreen) Update(c eff.Canvas) {
-	if p.progress < 1 {
-		p.progress += p.progressStep
-	}
-
-	// for i := range p.letterBlocks {
-	// p.letterBlocks[i].rect = p.letterBlocks[i].mover(p.letterBlocks[i].rect, p.progress)
-	// }
+	p.tweener.Tween()
 }

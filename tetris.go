@@ -26,8 +26,6 @@ func (t *tetris) Init(c eff.Canvas) {
 	t.tetrimino = randomTetrimino()
 	t.initialized = true
 	t.speed = 3
-
-	t.ps = pauseScreen{}
 }
 
 func (t *tetris) Draw(c eff.Canvas) {
@@ -192,8 +190,8 @@ func (t *tetris) arePointsClear(points []eff.Point) bool {
 
 func (t *tetris) togglePause(c eff.Canvas) {
 	t.paused = !t.paused
-
 	if t.paused {
+		t.ps = pauseScreen{}
 		c.AddDrawable(&t.ps)
 	} else {
 		c.RemoveDrawable(&t.ps)
