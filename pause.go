@@ -28,7 +28,7 @@ func (p *pauseScreen) Init(c eff.Canvas) {
 			p.letterBlocks[i].rect.Y = offsetPoint.Y + y
 		}
 		angle += 0.08
-	}, true)
+	}, true, false, nil, nil)
 }
 
 func (p *pauseScreen) Initialized() bool {

@@ -3,6 +3,7 @@ package main
 import (
 	"time"
 
+	"github.com/forestgiant/easing"
 	"github.com/forestgiant/eff"
 	"github.com/forestgiant/eff/component/tween"
 )
@@ -28,6 +29,7 @@ func (m *menu) Init(c eff.Canvas) {
 
 	m.tweener = tween.NewTweener(time.Millisecond*500, func(progress float64) {
 		startY := -1 * letterBlockSize
+		// startY := 100
 		endY := effPt.Y
 		y := int(float64(endY-startY) * progress)
 		for i := range m.effLetters {
@@ -35,12 +37,13 @@ func (m *menu) Init(c eff.Canvas) {
 		}
 
 		startY = h + letterBlockSize
+		// startY = h - 100
 		endY = tetrisPt.Y
 		y = int(float64(endY-startY) * progress)
 		for i := range m.tetrisLetters {
 			m.tetrisLetters[i].rect.Y = startY + y
 		}
-	}, false)
+	}, false, false, nil, easing.BounceOut)
 
 	m.initialized = true
 }
