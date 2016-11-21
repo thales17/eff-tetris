@@ -15,9 +15,8 @@ type pauseScreen struct {
 }
 
 func (p *pauseScreen) Init(c eff.Canvas) {
-	blockSize := 30
 	pauseStr := "PAUSE"
-	offsetPoint := eff.Point{X: (c.Width() - (len(pauseStr) * blockSize)) / 2, Y: (c.Height() - blockSize) / 2}
+	offsetPoint := eff.Point{X: (c.Width() - (len(pauseStr) * letterBlockSize)) / 2, Y: (c.Height() - letterBlockSize) / 2}
 	p.letterBlocks = append(p.letterBlocks, letterBlocksForString("PAUSE", offsetPoint)...)
 	p.initialized = true
 	angle := float64(0)

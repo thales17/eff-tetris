@@ -11,14 +11,15 @@ const (
 )
 
 type tetris struct {
-	initialized bool
-	blocks      []block
-	tetrimino   tetrimino
-	time        int
-	speed       int
-	gameOver    bool
-	paused      bool
-	ps          pauseScreen
+	initialized      bool
+	blocks           []block
+	tetrimino        tetrimino
+	time             int
+	speed            int
+	gameOver         bool
+	paused           bool
+	ps               pauseScreen
+	gameOverCallback func()
 }
 
 func (t *tetris) Init(c eff.Canvas) {
@@ -54,6 +55,9 @@ func (t *tetris) Update(c eff.Canvas) {
 		t.gameOver = t.isGameOver()
 		if t.gameOver {
 			fmt.Println("Game over man!")
+			if t.gameOverCallback != nil {
+				t.gameOverCallback()
+			}
 		}
 	}
 

@@ -18,21 +18,24 @@ type menu struct {
 
 func (m *menu) Init(c eff.Canvas) {
 	m.progressStep = float64(1) / float64(25)
-	blockSize := 30
 	h := c.Height()
-	m.effLetters = append(m.effLetters, letterBlocksForString("EFF", eff.Point{X: 0, Y: -200})...)
-	m.tetrisLetters = append(m.tetrisLetters, letterBlocksForString("TETRIS", eff.Point{X: 0, Y: h + blockSize})...)
+	effStr := "EFF"
+	effPt := eff.Point{X: (c.Width() - len(effStr)*letterBlockSize) / 2, Y: (c.Height() - letterBlockSize*2) / 2}
+	m.effLetters = append(m.effLetters, letterBlocksForString(effStr, eff.Point{X: effPt.X, Y: -1 * letterBlockSize})...)
+	tetrisStr := "TETRIS"
+	tetrisPt := eff.Point{X: (c.Width() - len(tetrisStr)*letterBlockSize) / 2, Y: (c.Height()-letterBlockSize*2)/2 + letterBlockSize}
+	m.tetrisLetters = append(m.tetrisLetters, letterBlocksForString(tetrisStr, eff.Point{X: tetrisPt.X, Y: h + letterBlockSize})...)
 
 	m.tweener = tween.NewTweener(time.Millisecond*500, func(progress float64) {
-		startY := -200
-		endY := 200
+		startY := -1 * letterBlockSize
+		endY := effPt.Y
 		y := int(float64(endY-startY) * progress)
 		for i := range m.effLetters {
 			m.effLetters[i].rect.Y = startY + y
 		}
 
-		startY = h + blockSize
-		endY = 200 + blockSize
+		startY = h + letterBlockSize
+		endY = tetrisPt.Y
 		y = int(float64(endY-startY) * progress)
 		for i := range m.tetrisLetters {
 			m.tetrisLetters[i].rect.Y = startY + y

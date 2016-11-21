@@ -11,9 +11,10 @@ import (
 )
 
 const (
-	matrixWidth  int = 10
-	matrixHeight int = 20
-	squareSize   int = 30
+	matrixWidth     int = 10
+	matrixHeight    int = 20
+	squareSize      int = 30
+	letterBlockSize int = 30
 )
 
 func main() {
@@ -39,19 +40,28 @@ func main() {
 		}
 
 		td := tetris{}
+
 		m := menu{}
+
 		showingMenu := true
-		swapMenuGame := func() {
-			if showingMenu {
-				canvas.RemoveDrawable(&m)
-				canvas.AddDrawable(&td)
-			} else {
+
+		startGame := func() {
+			if !showingMenu {
+				return
+			}
+			showingMenu = false
+			canvas.RemoveDrawable(&m)
+			td = tetris{}
+			td.gameOverCallback = func() {
+				if showingMenu {
+					return
+				}
 				canvas.RemoveDrawable(&td)
 				m = menu{}
 				canvas.AddDrawable(&m)
+				showingMenu = true
 			}
-
-			showingMenu = !showingMenu
+			canvas.AddDrawable(&td)
 		}
 
 		canvas.AddDrawable(&m)
@@ -77,9 +87,11 @@ func main() {
 			case sdl.KeyDown:
 				td.moveTetrimino()
 			case sdl.KeyP:
-				td.togglePause(canvas)
+				if !showingMenu {
+					td.togglePause(canvas)
+				}
 			case sdl.KeyReturn:
-				swapMenuGame()
+				startGame()
 			}
 		})
 	})
