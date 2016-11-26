@@ -14,6 +14,7 @@ type tetris struct {
 	initialized      bool
 	blocks           []block
 	tetrimino        tetrimino
+	nextTetrimino    tetrimino
 	time             int
 	speed            int
 	gameOver         bool
@@ -25,6 +26,7 @@ type tetris struct {
 func (t *tetris) Init(c eff.Canvas) {
 
 	t.tetrimino = randomTetrimino()
+	t.nextTetrimino = randomTetrimino()
 	t.initialized = true
 	t.speed = 3
 }
@@ -35,6 +37,8 @@ func (t *tetris) Draw(c eff.Canvas) {
 	for i := 0; i < len(t.blocks); i++ {
 		t.blocks[i].draw(c)
 	}
+
+	t.drawScoreboard(c)
 }
 
 func (t *tetris) Update(c eff.Canvas) {
@@ -47,7 +51,8 @@ func (t *tetris) Update(c eff.Canvas) {
 		t.time = 0
 		if !t.moveTetrimino() {
 			t.blocks = append(t.blocks, t.tetrimino.blocksWithPoint()...)
-			t.tetrimino = randomTetrimino()
+			t.tetrimino = t.nextTetrimino
+			t.nextTetrimino = randomTetrimino()
 
 		}
 
@@ -200,4 +205,9 @@ func (t *tetris) togglePause(c eff.Canvas) {
 	} else {
 		c.RemoveDrawable(&t.ps)
 	}
+}
+
+func (t *tetris) drawScoreboard(c eff.Canvas) {
+	tetrimino := tetriminoForRune(t.nextTetrimino.piece)
+	tetrimino.drawPreview(c)
 }

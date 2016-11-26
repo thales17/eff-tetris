@@ -11,17 +11,18 @@ import (
 )
 
 const (
-	matrixWidth     int = 10
-	matrixHeight    int = 20
-	squareSize      int = 30
-	letterBlockSize int = 30
+	matrixWidth      int = 10
+	matrixHeight     int = 20
+	squareSize       int = 30
+	letterBlockSize  int = 30
+	scoreboardHeight int = 50
 )
 
 func main() {
 	canvas := sdl.NewCanvas(
 		"Eff-Tetris",
 		matrixWidth*squareSize,
-		matrixHeight*squareSize,
+		matrixHeight*squareSize+scoreboardHeight,
 		eff.Color{R: 0x00, G: 0x00, B: 0x00, A: 0xFF},
 		60,
 		true,
@@ -71,21 +72,31 @@ func main() {
 			case sdl.KeyA:
 				fallthrough
 			case sdl.KeyLeft:
-				td.moveLeft()
+				if !showingMenu {
+					td.moveLeft()
+				}
 			case sdl.KeyD:
 				fallthrough
 			case sdl.KeyRight:
-				td.moveRight()
+				if !showingMenu {
+					td.moveRight()
+				}
 			case sdl.KeySpace:
-				td.dropTetrimino()
+				if !showingMenu {
+					td.dropTetrimino()
+				}
 			case sdl.KeyR:
 				fallthrough
 			case sdl.KeyUp:
-				td.rotate()
+				if !showingMenu {
+					td.rotate()
+				}
 			case sdl.KeyS:
 				fallthrough
 			case sdl.KeyDown:
-				td.moveTetrimino()
+				if !showingMenu {
+					td.moveTetrimino()
+				}
 			case sdl.KeyP:
 				if !showingMenu {
 					td.togglePause(canvas)
