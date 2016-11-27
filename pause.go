@@ -46,7 +46,7 @@ func (p *pauseScreen) Draw(c eff.Canvas) {
 	c.FillRect(r, eff.Color{R: 0xFF, G: 0xFF, B: 0xFF, A: 0xCC})
 
 	for _, block := range p.letterBlocks {
-		block.draw(c)
+		block.draw(blockFont, c)
 	}
 }
 

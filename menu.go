@@ -54,11 +54,11 @@ func (m *menu) Initialized() bool {
 
 func (m *menu) Draw(c eff.Canvas) {
 	for _, block := range m.effLetters {
-		block.draw(c)
+		block.draw(blockFont, c)
 	}
 
 	for _, block := range m.tetrisLetters {
-		block.draw(c)
+		block.draw(blockFont, c)
 	}
 }
 

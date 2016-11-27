@@ -210,7 +210,7 @@ func (t *tetris) togglePause(c eff.Canvas) {
 
 func (t *tetris) drawScoreboard(c eff.Canvas) {
 	scoreStr := fmt.Sprintf("Lines Cleared: %d", t.linesCleared)
-	c.DrawText(scoreStr, eff.White(), eff.Point{X: 10, Y: 10})
+	c.DrawText(scoreboardFont, scoreStr, eff.White(), eff.Point{X: 10, Y: 10})
 	tetrimino := tetriminoForRune(t.nextTetrimino.piece)
 	tetrimino.drawPreview(c)
 }

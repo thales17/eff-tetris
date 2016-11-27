@@ -15,11 +15,11 @@ type letterBlock struct {
 	rect   eff.Rect
 }
 
-func (l *letterBlock) draw(c eff.Canvas) {
+func (l *letterBlock) draw(f eff.Font, c eff.Canvas) {
 	c.FillRect(l.rect, l.color)
 
 	t := string(l.letter)
-	lp, err := util.CenterTextInRect(t, l.rect, c)
+	lp, err := util.CenterTextInRect(f, t, l.rect, c)
 	if err != nil {
 		fmt.Println(err)
 		os.Exit(1)
@@ -30,7 +30,7 @@ func (l *letterBlock) draw(c eff.Canvas) {
 		textColor = eff.White()
 	}
 
-	err = c.DrawText(t, textColor, lp)
+	err = c.DrawText(f, t, textColor, lp)
 	if err != nil {
 		fmt.Println(err)
 		os.Exit(1)
