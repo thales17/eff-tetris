@@ -1,9 +1,8 @@
 package main
 
 import (
-	"fmt"
+	"log"
 	"math/rand"
-	"os"
 
 	"github.com/forestgiant/eff"
 	"github.com/forestgiant/eff/util"
@@ -20,10 +19,8 @@ func (l *letterBlock) draw(f eff.Font, c eff.Canvas) {
 
 	t := string(l.letter)
 	lp, err := util.CenterTextInRect(f, t, l.rect, c)
-	fmt.Println(lp)
 	if err != nil {
-		fmt.Println(err)
-		os.Exit(1)
+		log.Fatal(err)
 	}
 
 	textColor := eff.Black()
@@ -33,8 +30,7 @@ func (l *letterBlock) draw(f eff.Font, c eff.Canvas) {
 
 	err = c.DrawText(f, t, textColor, lp)
 	if err != nil {
-		fmt.Println(err)
-		os.Exit(1)
+		log.Fatal(err)
 	}
 }
 
