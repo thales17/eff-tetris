@@ -20,6 +20,7 @@ func (l *letterBlock) draw(f eff.Font, c eff.Canvas) {
 
 	t := string(l.letter)
 	lp, err := util.CenterTextInRect(f, t, l.rect, c)
+	fmt.Println(lp)
 	if err != nil {
 		fmt.Println(err)
 		os.Exit(1)

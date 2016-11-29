@@ -1,12 +1,16 @@
 package main
 
 import (
+	"log"
 	"time"
 
 	"github.com/forestgiant/easing"
 	"github.com/forestgiant/eff"
 	"github.com/forestgiant/eff/component/tween"
 )
+
+var blockFont eff.Font
+var scoreboardFont eff.Font
 
 type menu struct {
 	effLetters    []letterBlock
@@ -18,6 +22,16 @@ type menu struct {
 }
 
 func (m *menu) Init(c eff.Canvas) {
+	var err error
+	blockFont, err = c.OpenFont("assets/fonts/roboto/Roboto-Bold.ttf", 24)
+	if err != nil {
+		log.Fatal(err)
+	}
+	scoreboardFont, err = c.OpenFont("assets/fonts/roboto/Roboto-Bold.ttf", 12)
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	m.progressStep = float64(1) / float64(25)
 	h := c.Height()
 	effStr := "EFF"

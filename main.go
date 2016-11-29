@@ -1,7 +1,6 @@
 package main
 
 import (
-	"log"
 	"math/rand"
 	"time"
 
@@ -17,9 +16,6 @@ const (
 	scoreboardHeight int = 50
 )
 
-var blockFont eff.Font
-var scoreboardFont eff.Font
-
 func main() {
 	canvas := sdl.NewCanvas(
 		"Eff-Tetris",
@@ -32,15 +28,6 @@ func main() {
 
 	canvas.Run(func() {
 		rand.Seed(time.Now().UnixNano())
-		var err error
-		blockFont, err = canvas.OpenFont("assets/fonts/roboto/Roboto-Bold.ttf", 24)
-		if err != nil {
-			log.Fatal(err)
-		}
-		scoreboardFont, err = canvas.OpenFont("assets/fonts/roboto/Roboto-Bold.ttf", 12)
-		if err != nil {
-			log.Fatal(err)
-		}
 
 		td := tetris{}
 
