@@ -203,10 +203,25 @@ func tetriminoForRune(piece rune) tetrimino {
 	return t
 }
 
+var nextTetrimino []rune
+
 func randomTetrimino() tetrimino {
-	pieces := []rune{'i', 'j', 'l', 'o', 's', 't', 'z'}
-	t := tetriminoForRune(pieces[rand.Intn(len(pieces))])
+	if len(nextTetrimino) == 0 {
+		pieces := []rune{'i', 'j', 'l', 'o', 's', 't', 'z'}
+		for len(nextTetrimino) < 6 {
+			index := rand.Intn(len(pieces))
+			nextTetrimino = append(nextTetrimino, pieces[index])
+
+			pieces = append(pieces[:index], pieces[index+1:]...)
+		}
+
+	}
+
+	t := tetriminoForRune(nextTetrimino[0])
+
 	t.point.X = (matrixWidth - t.width()) / 2
 	t.point.Y = 0
+
+	nextTetrimino = nextTetrimino[1:]
 	return t
 }
