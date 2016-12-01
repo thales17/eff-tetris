@@ -55,14 +55,13 @@ func (t *tetris) Update(c eff.Canvas) {
 			t.tetrimino = t.nextTetrimino
 			t.nextTetrimino = randomTetrimino()
 
-		}
-
-		t.clearLines()
-		t.gameOver = t.isGameOver()
-		if t.gameOver {
-			fmt.Println("Game over man!")
-			if t.gameOverCallback != nil {
-				t.gameOverCallback()
+			t.clearLines()
+			t.gameOver = t.isGameOver()
+			if t.gameOver {
+				fmt.Println("Game over man!")
+				if t.gameOverCallback != nil {
+					t.gameOverCallback()
+				}
 			}
 		}
 	}
