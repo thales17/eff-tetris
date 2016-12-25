@@ -1,0 +1,27 @@
+{
+	"ImportPath": "github.com/thales17/eff-tetris",
+	"GoVersion": "go1.7",
+	"GodepVersion": "v75",
+	"Deps": [
+		{
+			"ImportPath": "github.com/forestgiant/easing",
+			"Rev": "b3da9429853df169492505faae881dd4f4f925e5"
+		},
+		{
+			"ImportPath": "github.com/forestgiant/eff",
+			"Rev": "2a05390a231fe64eb4aba346e23b9d3232d1368f"
+		},
+		{
+			"ImportPath": "github.com/forestgiant/eff/component/tween",
+			"Rev": "2a05390a231fe64eb4aba346e23b9d3232d1368f"
+		},
+		{
+			"ImportPath": "github.com/forestgiant/eff/sdl",
+			"Rev": "2a05390a231fe64eb4aba346e23b9d3232d1368f"
+		},
+		{
+			"ImportPath": "github.com/forestgiant/eff/util",
+			"Rev": "2a05390a231fe64eb4aba346e23b9d3232d1368f"
+		}
+	]
+}
