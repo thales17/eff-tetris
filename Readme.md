@@ -1,6 +1,5 @@
 # Eff-Tetris
-- A simple version of the tetris game written in golang using the effulgent media API
-- ![demo](gif/eff-tetris-2.gif)
+- A simple version of the tetris game written in golang using the effulgent media API ![demo](gif/eff-tetris-2.gif)
 - The game has the following features
     - Keyboard controls (the arrow keys to move the piece and space to drop it)
     - Title screen
